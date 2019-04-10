@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="EllipsizeTextView">
+        <attr name="ellipsizeColor" format="color"/>
+        <attr name="ellipsizeUnderlineEnable" format="boolean"/>
+        <attr name="ellipsizeText" format="string"/>
+        <attr name="ellipsizeAutoFillBlankChar" format="boolean"/>
+        <attr name="isEllipsizeTextNewLine" format="boolean"/>
+    </declare-styleable>
+</resources>
