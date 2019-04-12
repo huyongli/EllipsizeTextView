@@ -56,6 +56,9 @@ open class EllipsizeTextView: TextView {
         gravity = Gravity.TOP or Gravity.START
     }
 
+    private fun getTextLayout(content: CharSequence) =
+        StaticLayout("$content...$ellipsizeText", paint, measuredWidth, Layout.Alignment.ALIGN_NORMAL, lineSpacingMultiplier, lineSpacingExtra, true)
+
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
         if(TextUtils.isEmpty(ellipsizeText)) {
@@ -67,7 +70,7 @@ open class EllipsizeTextView: TextView {
                     setMeasuredDimension(measuredWidth, measuredHeight + lineHeight)
                 }
                 isAutoFillBlankChar -> {
-                    val staticLayout = StaticLayout("$text...$ellipsizeText", paint, measuredWidth, Layout.Alignment.ALIGN_NORMAL, lineSpacingMultiplier, lineSpacingExtra, true)
+                    val staticLayout = getTextLayout(text)
 
                     val largeMaxOneLine = if(maxLines == Integer.MAX_VALUE) maxLines else maxLines + 1
                     when {
@@ -76,7 +79,8 @@ open class EllipsizeTextView: TextView {
                             text = "$newText..."
                         }
                         staticLayout.lineCount > largeMaxOneLine -> {
-                            val largeOneLineLastIndex = staticLayout.getLineEnd(maxLines + 1)
+                            var largeOneLineLastIndex = staticLayout.getLineEnd(maxLines + 1)
+                            largeOneLineLastIndex = if(largeOneLineLastIndex > text.length - 1) text.length else largeOneLineLastIndex
                             val largeOneLineText = text.subSequence(0, largeOneLineLastIndex).toString()
                             val newText = measureText(largeOneLineText)
                             text = "$newText..."
@@ -91,7 +95,7 @@ open class EllipsizeTextView: TextView {
 
     private fun measureText(content: String): String {
         val subText = content.substring(0, content.length - 1)
-        val staticLayout = StaticLayout("$subText...$ellipsizeText", paint, measuredWidth, Layout.Alignment.ALIGN_NORMAL, lineSpacingMultiplier, lineSpacingExtra, true)
+        val staticLayout = getTextLayout(subText)
         return when {
             staticLayout.lineCount > maxLines -> measureText(subText)
             else -> subText
